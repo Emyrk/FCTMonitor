@@ -23,6 +23,7 @@ var (
 	PASSWORD     string  = ""
 	EMAIL        string  = ""
 	NUMBERS      []string
+	UPDATE_FILES bool = false
 )
 
 func main() {
@@ -42,19 +43,19 @@ func main() {
 	hour := time.Now().Hour()
 	fmt.Println("Current Hour: ", time.Now().String())
 	if hour > 21 || hour < 9 {
-		fmt.Println("Late at night, ignoring...")
+		fmt.Println("Late at night, no texts...")
 	} else {
-		b, str := Update()
-		if b {
-			fmt.Println("Percent change over 10%, texting...")
-			SendEmail(str)
-			fmt.Println(str)
-		} else {
-			fmt.Println("Change under 10%")
-			fmt.Println(str)
-		}
+		UPDATE_FILES = true
 	}
-
+	b, str := Update()
+	if b {
+		fmt.Println("Percent change over 10%, texting...")
+		SendEmail(str)
+		fmt.Println(str)
+	} else {
+		//fmt.Println("Change under 10%")
+		fmt.Println(str)
+	}
 }
 
 func SendEmail(str string) bool {
@@ -94,7 +95,7 @@ func Update() (bool, string) {
 		change = -change
 	}
 	str := FormatStringFCT(btcToFct, btcToUsd, fctToUsd)
-	if change > 10 {
+	if change > 10 && UPDATE_FILES {
 		LAST_PERCENT = changePercentUSD
 		UpdateFile(changePercentUSD)
 		return true, str
