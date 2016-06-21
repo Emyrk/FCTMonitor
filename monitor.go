@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -9,6 +10,7 @@ import (
 	"net/smtp"
 	"os"
 	"strconv"
+	"text/template"
 	"time"
 	//"strings"
 )
@@ -32,7 +34,6 @@ func main() {
 	fmt.Printf("Last Percent Notified: %.2f%s\n", LAST_PERCENT, "%")
 	fmt.Println("Numbers: ", NUMBERS)
 	fmt.Println("Last Check: ", time.Now().String())
-	SendEmail("Comon")
 
 	hour := time.Now().Hour()
 	fmt.Println("Current Hour: ", time.Now().Hour())
@@ -53,15 +54,55 @@ func main() {
 
 }
 
+type SmtpTemplateData struct {
+	From    string
+	To      string
+	Subject string
+	Body    string
+}
+
 func SendEmail(str string) bool {
+	var doc bytes.Buffer
+	num := ""
+	for _, n := range NUMBERS {
+		num = num + n + ", "
+	}
+	num = num[:len(num)-2]
+
+	context := new(SmtpTemplateData)
+	context.From = EMAIL
+	context.To = num
+	context.Subject = "FCT"
+	context.Body = str
+
+	emailTemplate := `From: ` + EMAIL + `
+To: ` + num + `
+Subject: FCT
+` + str + `
+`
+
+	t := template.New("emailTemplate")
+	t, err := t.Parse(emailTemplate)
+	if err != nil {
+		fmt.Print("error trying to parse mail template")
+	}
+	err = t.Execute(&doc, context)
+	if err != nil {
+		fmt.Print("error trying to execute mail template")
+	}
+
 	email := &Email{EMAIL, PASSWORD, "smtp.gmail.com", 587}
 	auth := smtp.PlainAuth("", email.Username, email.Password, email.EmailServer)
 
-	smtp.SendMail(email.EmailServer+":"+strconv.Itoa(email.Port),
+	err = smtp.SendMail(email.EmailServer+":"+strconv.Itoa(email.Port),
 		auth,
 		email.Username,
 		NUMBERS,
-		[]byte(str))
+		doc.Bytes())
+	if err != nil {
+		fmt.Println(err.Error())
+		return false
+	}
 	return true
 }
 
