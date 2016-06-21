@@ -29,11 +29,8 @@ func main() {
 	fmt.Println("Summary")
 	fmt.Println("Email: " + EMAIL)
 	fmt.Printf("Last Percent: %f\n", LAST_PERCENT)
-<<<<<<< Updated upstream
-	fmt.Println(NUMBERS)
-=======
 	fmt.Println("Numbers: ", NUMBERS)
->>>>>>> Stashed changes
+
 	hour := time.Now().Hour()
 	fmt.Println("Current Hour: ", time.Now().Hour())
 	if hour > 21 || hour < 9 {
