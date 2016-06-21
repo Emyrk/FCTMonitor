@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/smtp"
 	"os"
+	"os/user"
 	"strconv"
 	"time"
 	//"strings"
@@ -18,13 +19,20 @@ var (
 	BTC_BUYIN    float64 = 0.001344086 // BTC per USD
 	USD_BUYIN    float64 = 1.18        // USD per FCT
 	LAST_PERCENT float64 = 0
-	DB_ROOT      string  = "$GOPATH/src/github.com/Emyrk/db"
+	DB_ROOT      string  = ""
 	PASSWORD     string  = ""
 	EMAIL        string  = ""
 	NUMBERS      []string
 )
 
 func main() {
+	usr, err := user.Current()
+	if err != nil {
+		fmt.Println("Error: " + err.Error())
+		return
+	}
+	DB_ROOT = usr.HomeDir + "/go/src/github.com/Emyrk/FCTMonitor/db"
+
 	PASSWORD, LAST_PERCENT, NUMBERS, EMAIL = Setup()
 	fmt.Println("Summary")
 	fmt.Println("Email: " + EMAIL)
