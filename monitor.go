@@ -29,7 +29,7 @@ func main() {
 	fmt.Printf("Last Percent: %f\n", LAST_PERCENT)
 	hour := time.Now().Hour()
 	fmt.Println("Current Hour: ", time.Now().Hour())
-	if hour > 22 || hour < 9 {
+	if hour > 23 || hour < 9 {
 		fmt.Println("Late at night, ignoring...")
 	} else {
 		b, str := Update()
