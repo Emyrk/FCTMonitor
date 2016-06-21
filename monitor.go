@@ -18,6 +18,7 @@ var (
 	BTC_BUYIN    float64 = 0.001344086 // BTC per USD
 	USD_BUYIN    float64 = 1.18        // USD per FCT
 	LAST_PERCENT float64 = 0
+	DB_ROOT      string  = "$GOPATH/src/github.com/Emyrk/db"
 	PASSWORD     string  = ""
 	EMAIL        string  = ""
 	NUMBERS      []string
@@ -27,6 +28,7 @@ func main() {
 	PASSWORD, LAST_PERCENT, NUMBERS, EMAIL = Setup()
 	fmt.Println(EMAIL)
 	fmt.Printf("Last Percent: %f\n", LAST_PERCENT)
+	fmt.Println(NUMBERS)
 	hour := time.Now().Hour()
 	fmt.Println("Current Hour: ", time.Now().Hour())
 	if hour > 21 || hour < 9 {
@@ -160,7 +162,7 @@ func GetCoinbase() (*Coinbase, error) {
 }
 
 func UpdateFile(newPercent float64) bool {
-	changeFile, err := os.OpenFile("db/change.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
+	changeFile, err := os.OpenFile("/change.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 	defer changeFile.Close()
 	if err != nil {
 		fmt.Println("Change file error: " + err.Error())
@@ -173,7 +175,7 @@ func UpdateFile(newPercent float64) bool {
 		}
 	}
 
-	timeFile, err := os.OpenFile("db/time.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
+	timeFile, err := os.OpenFile(DB_ROOT+"/time.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 	defer changeFile.Close()
 	if err != nil {
 		fmt.Println("Change file error: " + err.Error())
@@ -194,11 +196,11 @@ func Setup() (string, float64, []string, string) {
 	var err error
 
 	var password string
-	file, err := os.Open("db/password.txt")
+	file, err := os.Open(DB_ROOT + "/password.txt")
 	defer file.Close()
 	if err != nil {
 		fmt.Println("Password file error, making file: " + err.Error())
-		file, err = os.Create("db/password.txt")
+		file, err = os.Create(DB_ROOT + "/password.txt")
 		if err != nil {
 			fmt.Println("Password file error: " + err.Error())
 			return "", 0, nil, ""
@@ -211,11 +213,11 @@ func Setup() (string, float64, []string, string) {
 	}
 
 	numbers := make([]string, 0)
-	numbersFile, err := os.Open("db/numbers.txt")
+	numbersFile, err := os.Open(DB_ROOT + "/numbers.txt")
 	defer numbersFile.Close()
 	if err != nil {
 		fmt.Println("Password file error, making file: " + err.Error())
-		numbersFile, err = os.Create("db/password.txt")
+		numbersFile, err = os.Create(DB_ROOT + "/password.txt")
 		if err != nil {
 			fmt.Println("Password file error: " + err.Error())
 			return "", 0, nil, ""
@@ -228,11 +230,11 @@ func Setup() (string, float64, []string, string) {
 	}
 
 	var email string
-	emailFile, err := os.Open("db/email.txt")
+	emailFile, err := os.Open(DB_ROOT + "/email.txt")
 	defer emailFile.Close()
 	if err != nil {
 		fmt.Println("Email file error, making file: " + err.Error())
-		emailFile, err = os.Create("db/password.txt")
+		emailFile, err = os.Create(DB_ROOT + "/password.txt")
 		if err != nil {
 			fmt.Println("Email file error: " + err.Error())
 			return "", 0, nil, ""
@@ -245,11 +247,11 @@ func Setup() (string, float64, []string, string) {
 	}
 
 	var percent float64
-	changeFile, err := os.Open("db/change.txt")
+	changeFile, err := os.Open(DB_ROOT + "/change.txt")
 	defer changeFile.Close()
 	if err != nil {
 		fmt.Println("Change file error, making file: " + err.Error())
-		changeFile, err = os.Create("db/change.txt")
+		changeFile, err = os.Create(DB_ROOT + "/change.txt")
 		if err != nil {
 			fmt.Println("Change file error: " + err.Error())
 		}
@@ -264,11 +266,11 @@ func Setup() (string, float64, []string, string) {
 		}
 	}
 
-	timeFile, err := os.OpenFile("db/time.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
+	timeFile, err := os.OpenFile(DB_ROOT+"/time.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 	defer timeFile.Close()
 	if err != nil {
 		fmt.Println("Time file error, making file: " + err.Error())
-		timeFile, err = os.Create("db/time.txt")
+		timeFile, err = os.Create(DB_ROOT + "/time.txt")
 		if err != nil {
 			fmt.Println("Time file error: " + err.Error())
 		}
