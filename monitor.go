@@ -40,7 +40,7 @@ func main() {
 	fmt.Println("Numbers: ", NUMBERS)
 
 	hour := time.Now().Hour()
-	fmt.Println("Current Hour: ", time.Now().Hour())
+	fmt.Println("Current Hour: ", time.Now().String())
 	if hour > 21 || hour < 9 {
 		fmt.Println("Late at night, ignoring...")
 	} else {
@@ -105,8 +105,8 @@ func Update() (bool, string) {
 }
 
 func FormatStringFCT(btcToFct float64, btcToUsd float64, fctToUsd float64) string {
-	changePercentUSD := 1 - (fctToUsd / USD_BUYIN)
-	changePercentBTC := 1 - ((btcToFct) / (FCT_BUYIN))
+	changePercentUSD := (1 - (USD_BUYIN / fctToUsd)) * 100
+	changePercentBTC := (1 - (FCT_BUYIN / btcToFct)) * 100
 
 	title := "Poloniex Factoids Update\nPercent change from original.\n"
 	plus := ""
@@ -172,7 +172,7 @@ func GetCoinbase() (*Coinbase, error) {
 }
 
 func UpdateFile(newPercent float64) bool {
-	changeFile, err := os.OpenFile("/change.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
+	changeFile, err := os.OpenFile(DB_ROOT+"/change.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 	defer changeFile.Close()
 	if err != nil {
 		fmt.Println("Change file error: " + err.Error())
