@@ -16,15 +16,16 @@ import (
 )
 
 var (
-	FCT_BUYIN    float64 = 0.00158475  // BTC per FCT
-	BTC_BUYIN    float64 = 0.001344086 // BTC per USD
-	USD_BUYIN    float64 = 1.18        // USD per FCT
-	LAST_PERCENT float64 = 0
-	DB_ROOT      string  = "/home/nuroubaix/go/src/github.com/Emyrk/FCTMonitor/db"
-	PASSWORD     string  = ""
-	EMAIL        string  = ""
-	NUMBERS      []string
-	UPDATE_FILES bool = false
+	FCT_BUYIN     float64 = 0.00158475  // BTC per FCT
+	BTC_BUYIN     float64 = 0.001344086 // BTC per USD
+	USD_BUYIN     float64 = 1.18        // USD per FCT
+	USD_NXT_BUYIN float64 = 0.018       // USD per NXT
+	LAST_PERCENT  float64 = 0
+	DB_ROOT       string  = "/home/nuroubaix/go/src/github.com/Emyrk/FCTMonitor/db"
+	PASSWORD      string  = ""
+	EMAIL         string  = ""
+	NUMBERS       []string
+	UPDATE_FILES  bool = false
 )
 
 func main() {
@@ -119,11 +120,14 @@ func Update() (bool, string) {
 		return false, "error"
 	}
 	fct := p.BTCFCT
+	nxt := p.BTCNXT
 	utb := c.Data.Rates.BTC
 
 	btcToFct, _ := strconv.ParseFloat(fct.Last, 64) // How much BTC = 1 FCT
+	btcToNxt, _ := strconv.ParseFloat(nxt.Last, 64) // How much BTC = 1 NXT
 	btcToUsd, _ := strconv.ParseFloat(utb, 64)      // How much BTC = $1
 	fctToUsd := btcToFct / btcToUsd                 // How much $1 = 1 FCT
+	nxtToUsd := btcToNxt / btcToUsd                 // How much $1 = 1 FCT
 
 	changePercentUSD := (1 - (USD_BUYIN / fctToUsd)) * 100
 	change := changePercentUSD - LAST_PERCENT
@@ -131,6 +135,7 @@ func Update() (bool, string) {
 		change = -change
 	}
 	str := FormatStringFCT(btcToFct, btcToUsd, fctToUsd)
+	str = str + fmt.Sprintf("FCT_USD: $%.4f\n\n", nxtToUsd)
 	if change > 10 && UPDATE_FILES {
 		LAST_PERCENT = changePercentUSD
 		UpdateFile(changePercentUSD)
