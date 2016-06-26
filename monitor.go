@@ -10,6 +10,7 @@ import (
 	"net/smtp"
 	"os"
 	"strconv"
+	"strings"
 	"text/template"
 	"time"
 	//"strings"
@@ -63,6 +64,7 @@ type SmtpTemplateData struct {
 }
 
 func SendEmail(str string) bool {
+	str = strings.Split(str, "################")[0]
 	var doc bytes.Buffer
 	num := ""
 	for _, n := range NUMBERS {
@@ -135,6 +137,7 @@ func Update() (bool, string) {
 		change = -change
 	}
 	str := FormatStringFCT(btcToFct, btcToUsd, fctToUsd, nxtToUsd)
+	fmt.Println("DEBUG: ", str)
 	if change > 10 && UPDATE_FILES {
 		LAST_PERCENT = changePercentUSD
 		UpdateFile(changePercentUSD)
@@ -169,7 +172,7 @@ func FormatStringFCT(btcToFct float64, btcToUsd float64, fctToUsd float64, nxtTo
 	}
 	nxt := fmt.Sprintf("NXT_USD: %.3f$\nNXT_USD: %s%.2f%s\n", nxtToUsd, plus, changePercentNXT, "%")
 
-	str := title + usd + btc + nxt
+	str := title + usd + btc + "################\n" + nxt
 	return str
 }
 
