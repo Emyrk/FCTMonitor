@@ -134,8 +134,7 @@ func Update() (bool, string) {
 	if change < 0 {
 		change = -change
 	}
-	str := FormatStringFCT(btcToFct, btcToUsd, fctToUsd)
-	str = str + fmt.Sprintf("FCT_USD: $%.4f\n\n", nxtToUsd)
+	str := FormatStringFCT(btcToFct, btcToUsd, fctToUsd, nxtToUsd)
 	if change > 10 && UPDATE_FILES {
 		LAST_PERCENT = changePercentUSD
 		UpdateFile(changePercentUSD)
@@ -146,9 +145,10 @@ func Update() (bool, string) {
 	return false, str
 }
 
-func FormatStringFCT(btcToFct float64, btcToUsd float64, fctToUsd float64) string {
+func FormatStringFCT(btcToFct float64, btcToUsd float64, fctToUsd float64, nxtToUsd float64) string {
 	changePercentUSD := (1 - (USD_BUYIN / fctToUsd)) * 100
 	changePercentBTC := (1 - (FCT_BUYIN / btcToFct)) * 100
+	changePercentNXT := (1 - (USD_NXT_BUYIN / nxtToUsd)) * 100
 
 	title := "Poloniex Factoids Update\nPercent change from original.\n"
 	plus := ""
@@ -163,7 +163,13 @@ func FormatStringFCT(btcToFct float64, btcToUsd float64, fctToUsd float64) strin
 	}
 	btc := fmt.Sprintf("FCT_BTC: %.2fmB\nFCT_BTC: %s%.2f%s\n", btcToFct*1000, plus, changePercentBTC, "%")
 
-	str := title + usd + btc
+	plus = ""
+	if changePercentBTC > 0 {
+		plus = "+"
+	}
+	nxt := fmt.Sprintf("NXT_USD: %.3f$\nNXT_USD: %s%.2f%s\n", nxtToUsd, plus, changePercentNXT, "%")
+
+	str := title + usd + btc + nxt
 	return str
 }
 
