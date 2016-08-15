@@ -1,5 +1,7 @@
 package main
 
+// Not the best way to do it, but it's the quick and easy way ;)
+
 type Poloniex struct {
 	BTC1CR struct {
 		BaseVolume    string `json:"baseVolume"`
