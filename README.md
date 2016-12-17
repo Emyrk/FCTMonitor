@@ -1,2 +1,2 @@
 Messing around with travis
-https://travis-ci.org/Emyrk/FCTMonitor.svg?branch=master
+![Build](https://travis-ci.org/Emyrk/FCTMonitor.svg?branch=master)
